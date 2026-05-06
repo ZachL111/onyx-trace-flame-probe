@@ -1,68 +1,40 @@
 # onyx-trace-flame-probe
 
-`onyx-trace-flame-probe` is a Scala project for Observability. It turns package a Scala local lab for flame analysis with deny and allow fixtures, explainable decision traces, and documented operating limits into a small local model with readable fixtures and a direct verification command.
+`onyx-trace-flame-probe` is a compact Scala repository for observability, centered on this goal: Package a Scala local lab for flame analysis with deny and allow fixtures, explainable decision traces, and documented operating limits.
 
-## Reading Onyx Trace Flame Probe
+## Why I Keep It Small
 
-Start with the README, then open `metadata/project.json` to check the constants behind the examples. After that, `fixtures/cases.csv` shows the compact path and `examples/extended_cases.csv` gives a wider look at the same rule.
+The project exists to keep a narrow engineering decision visible and testable. For this repo, that decision is how span volume and signal loss should influence a review result.
 
-## Purpose
+## Onyx Trace Flame Probe Review Notes
 
-This is not a wrapper around a service. It is a self-contained project that shows how the model behaves when demand, capacity, latency, risk, and weight move in different directions.
+`stale` and `edge` are the cases worth reading first. They show the optimistic and cautious ends of the fixture.
 
-## Design Sketch
+## Included Behavior
 
-The core is a scoring model over demand, capacity, latency, risk, and weight. That keeps span data, log shape, and latency summaries in one explicit decision path. The threshold is 156, with risk penalty 4, latency penalty 4, and weight bonus 5. The Scala code uses case classes and a compact object API to keep the test path direct.
+- `fixtures/domain_review.csv` adds cases for span volume and latency skew.
+- `metadata/domain-review.json` records the same cases in structured form.
+- `config/review-profile.json` captures the read order and the two review questions.
+- `examples/onyx-trace-flame-walkthrough.md` walks through the case spread.
+- The Scala code includes a review path for `span volume` and `signal loss`.
+- `docs/field-notes.md` explains the strongest and weakest cases.
 
-## Fixture Notes
+## Internal Model
 
-`examples/extended_cases.csv` adds six named cases. I kept the names plain so failures are easy to read in a terminal: baseline, pressure, surge, degraded, recovery, and boundary.
+The core code exposes a scoring path and the added review layer uses `signal`, `slack`, `drag`, and `confidence`. The domain terms are `span volume`, `latency skew`, `signal loss`, and `incident shape`.
 
-## What It Does
+The Scala code keeps the review rule close to the tests.
 
-- Uses fixture data to keep log shape changes visible in code review.
-- Includes extended examples for latency summaries, including `surge` and `degraded`.
-- Documents incident slices tradeoffs in `docs/operations.md`.
-- Runs locally with a single verification command and no external credentials.
-- Stores project constants and verification metadata in `metadata/project.json`.
-
-## Setup
-
-Use a normal shell with Scala available on `PATH`. The verifier is written as a PowerShell script because the portfolio was assembled on Windows.
-
-## Verification
-
-```powershell
-powershell -NoProfile -ExecutionPolicy Bypass -File scripts/audit.ps1
-```
-
-The audit command checks repository structure and README constraints before it delegates to the verifier.
-
-## Files Worth Reading
-
-- `src`: primary implementation
-- `tests`: verification harness
-- `fixtures`: compact golden scenarios
-- `examples`: expanded scenario set
-- `metadata`: project constants and verification metadata
-- `docs`: operations and extension notes
-- `scripts`: local verification and audit commands
-
-## Limits
-
-The examples cover useful edges, not every edge. A larger version would add malformed-input tests, richer reports, and deeper domain parsers.
-
-## Next Directions
-
-- Add a loader for `examples/extended_cases.csv` and promote selected cases into the language test suite.
-- Add a short report command that prints the score breakdown for a single scenario.
-- Add malformed input fixtures so the failure path is as visible as the happy path.
-- Add one more observability fixture that focuses on a malformed or borderline input.
-
-## Usage
+## Try It Locally
 
 ```powershell
 powershell -NoProfile -ExecutionPolicy Bypass -File scripts/verify.ps1
 ```
 
-This runs the language-level build or test path against the compact fixture set.
+## Validation
+
+That command is also the regression path. It verifies the domain cases and catches mismatches between the CSV, metadata, and code.
+
+## Scope
+
+This remains a local project with deterministic fixtures. It does not depend on credentials, hosted services, or live data. Future work should add richer malformed inputs before widening the public API.

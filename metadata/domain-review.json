@@ -1,0 +1,73 @@
+{
+  "repo": "onyx-trace-flame-probe",
+  "language": "Scala",
+  "category": "Observability",
+  "goal": "Package a Scala local lab for flame analysis with deny and allow fixtures, explainable decision traces, and documented operating limits.",
+  "review_model": {
+    "terms": [
+      "span volume",
+      "latency skew",
+      "signal loss",
+      "incident shape"
+    ],
+    "lanes": [
+      "ship",
+      "watch",
+      "hold"
+    ],
+    "score": "signal * 2 + slack + confidence - drag * 3",
+    "purpose": "surface the domain-specific cases that need the most careful review"
+  },
+  "cases": [
+    {
+      "name": "baseline",
+      "focus": "span volume",
+      "signal": 76,
+      "slack": 49,
+      "drag": 25,
+      "confidence": 91,
+      "score": 217,
+      "lane": "ship"
+    },
+    {
+      "name": "stress",
+      "focus": "latency skew",
+      "signal": 83,
+      "slack": 28,
+      "drag": 26,
+      "confidence": 94,
+      "score": 210,
+      "lane": "ship"
+    },
+    {
+      "name": "edge",
+      "focus": "signal loss",
+      "signal": 51,
+      "slack": 24,
+      "drag": 32,
+      "confidence": 94,
+      "score": 124,
+      "lane": "watch"
+    },
+    {
+      "name": "recovery",
+      "focus": "incident shape",
+      "signal": 80,
+      "slack": 20,
+      "drag": 28,
+      "confidence": 57,
+      "score": 153,
+      "lane": "ship"
+    },
+    {
+      "name": "stale",
+      "focus": "span volume",
+      "signal": 91,
+      "slack": 52,
+      "drag": 21,
+      "confidence": 85,
+      "score": 256,
+      "lane": "ship"
+    }
+  ]
+}
